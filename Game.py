@@ -60,8 +60,8 @@ while True:
                     counter = 0
 
 
-            cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,255), 5)
-            cvzone.putTextRect(img, f'{int(distance_in_cm)} cm', (x+10, y+10))
+            # cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,255), 5)    # uncomment to show distance in cm
+            # cvzone.putTextRect(img, f'{int(distance_in_cm)} cm', (x+10, y+10))    # uncomment to show border box
 
         # draw button
         cv2.circle(img, (cx, cy), 20, color, cv2.FILLED)
