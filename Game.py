@@ -4,6 +4,7 @@ from cvzone.HandTrackingModule import HandDetector
 import math
 import numpy as np
 import random
+import time
 
 # webcam
 cap = cv2.VideoCapture(0)
@@ -23,6 +24,8 @@ cx, cy = 250, 250
 color = (255, 0, 255)
 counter = 0
 score = 0
+startTime = time.time()
+totalTime = 30
 
 # loop
 while True:
@@ -30,44 +33,47 @@ while True:
     img = cv2.flip(img,1)
     hand = detector.findHands(img, draw=False)
 
-    if hand:
-        lmList = hand[0]['lmList']
-        x, y, w, h = hand[0]['bbox']
-        x1, y1 = lmList[5]
-        x2, y2 = lmList[17]
+    if time.time()-startTime < totalTime:
+        if hand:
+            lmList = hand[0]['lmList']
+            x, y, w, h = hand[0]['bbox']
+            x1, y1 = lmList[5]
+            x2, y2 = lmList[17]
 
-        distance = int(math.sqrt(abs(y2-y1)**2 + abs(x2-x1)**2))
-        A, B, C = coeff[0], coeff[1], coeff[2]
+            distance = int(math.sqrt(abs(y2-y1)**2 + abs(x2-x1)**2))
+            A, B, C = coeff[0], coeff[1], coeff[2]
 
-        distance_in_cm = A*distance**2 + B*distance + C
+            distance_in_cm = A*distance**2 + B*distance + C
 
-        if distance_in_cm < 40:
-            if x < cx < x+w and y < cy < y+h:
-                counter = 1
+            if distance_in_cm < 40:
+                if x < cx < x+w and y < cy < y+h:
+                    counter = 1
 
-        if counter:
-            counter+=1
-            color = (0, 255, 0)
-            if counter==3:
-                score+=1
-                color = (255, 0, 255)
-                cx = random.randint(100, 1100)
-                cy = random.randint(100, 600)
-                counter = 0
+            if counter:
+                counter+=1
+                color = (0, 255, 0)
+                if counter==3:
+                    score+=1
+                    color = (255, 0, 255)
+                    cx = random.randint(100, 1100)
+                    cy = random.randint(100, 600)
+                    counter = 0
 
 
-        cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,255), 5)
-        cvzone.putTextRect(img, f'{int(distance_in_cm)} cm', (x+10, y+10))
+            cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,255), 5)
+            cvzone.putTextRect(img, f'{int(distance_in_cm)} cm', (x+10, y+10))
 
-    # draw button
-    cv2.circle(img, (cx, cy), 20, color, cv2.FILLED)
-    cv2.circle(img, (cx, cy), 6, (255, 255, 255), cv2.FILLED)
-    cv2.circle(img, (cx, cy), 15, (255, 255, 255), 2)
-    cv2.circle(img, (cx, cy), 20, (0, 0, 0), 2)
+        # draw button
+        cv2.circle(img, (cx, cy), 20, color, cv2.FILLED)
+        cv2.circle(img, (cx, cy), 6, (255, 255, 255), cv2.FILLED)
+        cv2.circle(img, (cx, cy), 15, (255, 255, 255), 2)
+        cv2.circle(img, (cx, cy), 20, (0, 0, 0), 2)
 
-    # game head up display
-    cvzone.putTextRect(img, 'Time : 30', (1100,75), scale=2, offset=20)
-    cvzone.putTextRect(img, f'Points : {str(score).zfill(2)}', (70,75), scale=2, offset=20)
+        # game head up display
+        cvzone.putTextRect(img, f'Time : {int(totalTime-(time.time()-startTime))}', (1100,75), scale=2, offset=20)
+        cvzone.putTextRect(img, f'Points : {str(score).zfill(2)}', (70,75), scale=2, offset=20)
+    else:
+        pass
 
     cv2.imshow("Camera", img)
     cv2.waitKey(1)
