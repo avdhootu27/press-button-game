@@ -12,7 +12,7 @@ detector = HandDetector(detectionCon=0.8, maxHands=1)
 # loop
 while True:
     success, img = cap.read()
-
+    hand, img = detector.findHands(img)
 
     cv2.imshow("Camera", img)
     cv2.waitKey(1)
