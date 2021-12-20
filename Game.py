@@ -73,7 +73,14 @@ while True:
         cvzone.putTextRect(img, f'Time : {int(totalTime-(time.time()-startTime))}', (1100,75), scale=2, offset=20)
         cvzone.putTextRect(img, f'Points : {str(score).zfill(2)}', (70,75), scale=2, offset=20)
     else:
-        pass
+        cvzone.putTextRect(img, 'Game Over', (400, 400), scale=5, offset=40, thickness=5)
+        cvzone.putTextRect(img, f'Your points : {str(score).zfill(2)}', (420, 500), scale=3, offset=20)
+        cvzone.putTextRect(img, 'Press R to restart', (465, 550), scale=2, offset=10)
 
-    cv2.imshow("Camera", img)
-    cv2.waitKey(1)
+    cv2.imshow("Avdhoot's game", img)
+    key = cv2.waitKey(1)
+
+    if key==ord('r'):
+        startTime = time.time()
+        score = 0
+        counter = 0
