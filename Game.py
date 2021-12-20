@@ -3,6 +3,7 @@ import cvzone
 from cvzone.HandTrackingModule import HandDetector
 import math
 import numpy as np
+import random
 
 # webcam
 cap = cv2.VideoCapture(0)
@@ -20,6 +21,7 @@ coeff = np.polyfit(x, y, 2)
 # game variables
 cx, cy = 250, 250
 color = (255, 0, 255)
+counter = 0
 
 # loop
 while True:
@@ -37,6 +39,20 @@ while True:
 
         distance_in_cm = A*distance**2 + B*distance + C
 
+        if distance_in_cm < 40:
+            if x < cx < x+w and y < cy < y+h:
+                counter = 1
+
+        if counter:
+            counter+=1
+            color = (0, 255, 0)
+            if counter==3:
+                color = (255, 0, 255)
+                cx = random.randint(100, 1100)
+                cy = random.randint(100, 600)
+                counter = 0
+
+
         cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,255), 5)
         cvzone.putTextRect(img, f'{int(distance_in_cm)} cm', (x+10, y+10))
 
@@ -44,7 +60,11 @@ while True:
     cv2.circle(img, (cx, cy), 20, color, cv2.FILLED)
     cv2.circle(img, (cx, cy), 6, (255, 255, 255), cv2.FILLED)
     cv2.circle(img, (cx, cy), 15, (255, 255, 255), 2)
-    cv2.circle(img, (cx, cy), 20, (0, 0, 0), 3)
+    cv2.circle(img, (cx, cy), 20, (0, 0, 0), 2)
+
+    # game head up display
+    cvzone.putTextRect(img, 'Time : 30', (1100,75), scale=2, offset=20)
+    cvzone.putTextRect(img, 'Points : 30', (70,75), scale=2, offset=20)
 
     cv2.imshow("Camera", img)
     cv2.waitKey(1)
