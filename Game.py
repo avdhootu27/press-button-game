@@ -22,10 +22,12 @@ coeff = np.polyfit(x, y, 2)
 cx, cy = 250, 250
 color = (255, 0, 255)
 counter = 0
+score = 0
 
 # loop
 while True:
     success, img = cap.read()
+    img = cv2.flip(img,1)
     hand = detector.findHands(img, draw=False)
 
     if hand:
@@ -47,6 +49,7 @@ while True:
             counter+=1
             color = (0, 255, 0)
             if counter==3:
+                score+=1
                 color = (255, 0, 255)
                 cx = random.randint(100, 1100)
                 cy = random.randint(100, 600)
@@ -64,7 +67,7 @@ while True:
 
     # game head up display
     cvzone.putTextRect(img, 'Time : 30', (1100,75), scale=2, offset=20)
-    cvzone.putTextRect(img, 'Points : 30', (70,75), scale=2, offset=20)
+    cvzone.putTextRect(img, f'Points : {str(score).zfill(2)}', (70,75), scale=2, offset=20)
 
     cv2.imshow("Camera", img)
     cv2.waitKey(1)
